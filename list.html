@@ -5,7 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบพิมพ์บัตรประจำตัวเจ้าหน้าที่รัฐ</title>
     
-    
+    <!-- 🔒 ระบบตรวจสอบการเข้าสู่ระบบ (Authentication Guard) -->
+    <script>
+        (function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('กรุณาเข้าสู่ระบบก่อนเข้าใช้งาน');
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
 
     <!-- Fonts: Noto Sans Thai & TH Sarabun PSK / Sarabun -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
