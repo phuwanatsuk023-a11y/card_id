@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบยื่นคำขอบัตรประวัติ ก.พ.7</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <!-- SweetAlert2 -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <!-- Google Font Noto Sans Thai -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { 
+      font-family: 'Noto Sans Thai', sans-serif; 
+      background-color: #f8fafc; /* bg-slate-50 */
+      color: #1e293b; /* text-slate-800 */
+    }
+    .main-card { border: none; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); background-color: #ffffff; }
+    .nav-pills .nav-link { border-radius: 10px; padding: 12px 20px; font-weight: 500; color: #475569; }
+    .nav-pills .nav-link.active { background-color: #2563eb; color: #ffffff; } /* bg-blue-600 */
+    .notice-box { background-color: #eff6ff; border-left: 5px solid #2563eb; border-radius: 8px; }
+    .badge-status { font-size: 0.9rem; padding: 6px 12px; border-radius: 20px; }
+    .stat-card { border-radius: 12px; border: none; transition: transform 0.2s; }
+    .stat-card:hover { transform: translateY(-3px); }
+
+    /* Slate & Color Palette Custom Utility Classes */
+    .bg-blue-custom { background-color: #2563eb !important; color: #ffffff; }
+    .bg-emerald-custom { background-color: #10b981 !important; color: #ffffff; }
+    .bg-amber-custom { background-color: #f59e0b !important; color: #0f172a; }
+    .bg-rose-custom { background-color: #f43f5e !important; color: #ffffff; }
+    .bg-slate-custom { background-color: #64748b !important; color: #ffffff; }
+
+    .btn-primary { background-color: #2563eb; border-color: #2563eb; }
+    .btn-primary:hover { background-color: #1d4ed8; border-color: #1d4ed8; }
+    .btn-success { background-color: #10b981; border-color: #10b981; }
+    .btn-success:hover { background-color: #059669; border-color: #059669; }
+    .btn-danger { background-color: #f43f5e; border-color: #f43f5e; }
+    .btn-danger:hover { background-color: #e11d48; border-color: #e11d48; }
+    .btn-outline-danger { color: #f43f5e; border-color: #f43f5e; }
+    .btn-outline-danger:hover { background-color: #f43f5e; color: #ffffff; }
+    .text-primary { color: #2563eb !important; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4 my-2">
+  <!-- Header -->
+  <div class="text-center mb-4">
+    <h2 class="fw-bold text-primary"><i class="fa-solid fa-id-card me-2"></i>ระบบยื่นคำขอบัตรประวัติ ก.พ.7</h2>
+    <p class="text-secondary mb-1">บริการยื่นคำขอออนไลน์ และติดตามสถานะเอกสาร</p>
+    <small class="text-muted">ฝ่ายบุคลากรทางการศึกษา กองการเจ้าหน้าที่ เทศบาลเมืองวารินชำราบ</small>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <ul class="nav nav-pills nav-fill mb-4 bg-white p-2 rounded-3 shadow-sm" id="mainTab" role="tablist">
+    <li class="nav-item">
+      <button class="nav-link active" id="request-tab" data-bs-toggle="tab" data-bs-target="#request-pane" type="button">
+        <i class="fa-solid fa-file-pen me-2"></i>ยื่นคำขอใหม่
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="status-tab" data-bs-toggle="tab" data-bs-target="#status-pane" type="button">
+        <i class="fa-solid fa-magnifying-glass me-2"></i>ตรวจสอบสถานะคำขอ
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-pane" type="button">
+        <i class="fa-solid fa-user-shield me-2"></i>สำหรับเจ้าหน้าที่
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Contents -->
+  <div class="tab-content" id="mainTabContent">
+    
+    <!-- Tab 1: Form ยื่นคำขอ -->
+    <div class="tab-pane fade show active" id="request-pane">
+      <div class="card main-card p-4">
+        <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-wpforms me-2"></i>กรอกข้อมูลคำขอบัตรประวัติ (ก.พ.7)</h5>
+        <form id="requestForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">เลขประจำตัวประชาชน (13 หลัก) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="idCard" maxlength="13" required placeholder="กรอกตัวเลข 13 หลัก">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">ชื่อ-นามสกุล <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="fullName" required placeholder="ระบุชื่อและนามสกุล">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">ตำแหน่ง <span class="text-danger">*</span></label>
+              <select class="form-select" id="position" required>
+                <option value="" selected disabled>-- เลือกตำแหน่ง --</option>
+                <option value="ผู้อำนวยการสถานศึกษา">ผู้อำนวยการสถานศึกษา</option>
+                <option value="รองผู้อำนวยการสถานศึกษา">รองผู้อำนวยการสถานศึกษา</option>
+                <option value="ศึกษานิเทศก์">ศึกษานิเทศก์</option>
+                <option value="ครู">ครู</option>
+                <option value="พนักงานจ้าง">พนักงานจ้าง</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">สังกัด <span class="text-danger">*</span></label>
+              <select class="form-select" id="department" required>
+                <option value="" selected disabled>-- เลือกสังกัด --</option>
+                <option value="โรงเรียนเทศบาลวารินวิชาชาติ">โรงเรียนเทศบาลวารินวิชาชาติ</option>
+                <option value="โรงเรียนเทศบาลบ้านสุขสำราญ">โรงเรียนเทศบาลบ้านสุขสำราญ</option>
+                <option value="โรงเรียนเทศบาลบ้านหนองตาโผ่นมิตรภาพที่ 5">โรงเรียนเทศบาลบ้านหนองตาโผ่นมิตรภาพที่ 5</option>
+                <option value="กองการศึกษา">กองการศึกษา</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">เบอร์โทรศัพท์ติดต่อ <span class="text-danger">*</span></label>
+              <input type="tel" class="form-control" id="phone" maxlength="10" required placeholder="081xxxxxxx">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">จำนวนชุดที่ต้องการ (สูงสุด 2 ชุด) <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="quantity" min="1" max="2" value="1" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label d-block">วัตถุประสงค์ในการนำไปใช้ <span class="text-danger">*</span></label>
+              <div class="form-check form-check-inline mb-2">
+                <input class="form-check-input" type="radio" name="purposeRadio" id="purpose1" value="ขอต่อใบประกอบวิชาชีพ" required>
+                <label class="form-check-label" for="purpose1">1. ขอต่อใบประกอบวิชาชีพ</label>
+              </div>
+              <div class="form-check form-check-inline mb-2">
+                <input class="form-check-input" type="radio" name="purposeRadio" id="purpose2" value="ขอเลื่อนวิทยฐานะ">
+                <label class="form-check-label" for="purpose2">2. ขอเลื่อนวิทยฐานะ</label>
+              </div>
+              <div class="form-check form-check-inline mb-2">
+                <input class="form-check-input" type="radio" name="purposeRadio" id="purpose3" value="อื่นๆ">
+                <label class="form-check-label" for="purpose3">3. อื่นๆ</label>
+              </div>
+              <div class="mt-2 d-none" id="otherPurposeBox">
+                <input type="text" class="form-control" id="otherPurposeInput" placeholder="ระบุวัตถุประสงค์เพิ่มเติม...">
+              </div>
+            </div>
+            <div class="col-12 text-end mt-4">
+              <button type="submit" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-paper-plane me-2"></i>ส่งคำขอ</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab 2: ตรวจสอบสถานะ -->
+    <div class="tab-pane fade" id="status-pane">
+      <div class="card main-card p-4">
+        <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-search me-2"></i>ค้นหาคำขอ</h5>
+        <div class="input-group mb-4">
+          <input type="text" id="searchKeyword" class="form-control form-control-lg" placeholder="กรอกเลขประจำตัวประชาชน 13 หลัก หรือ รหัสคำขอ (เช่น REQ-xxx)">
+          <button class="btn btn-primary px-4" id="btnSearch"><i class="fa-solid fa-search me-2"></i>ค้นหา</button>
+        </div>
+        <div id="statusResult"></div>
+      </div>
+    </div>
+
+    <!-- Tab 3: สำหรับเจ้าหน้าที่ -->
+    <div class="tab-pane fade" id="admin-pane">
+      
+      <!-- ส่วนล็อกอิน -->
+      <div id="adminLoginBox" class="card main-card p-4 mx-auto" style="max-width: 420px;">
+        <h5 class="fw-bold text-center mb-3"><i class="fa-solid fa-lock me-2"></i>เข้าสู่ระบบเจ้าหน้าที่</h5>
+        <form id="adminLoginForm">
+          <div class="mb-3">
+            <label class="form-label">ชื่อผู้ใช้งาน (Username)</label>
+            <input type="text" id="adminUsername" class="form-control" required placeholder="admin">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">รหัสผ่าน (Password)</label>
+            <input type="password" id="adminPassword" class="form-control" required placeholder="••••">
+          </div>
+          <button type="submit" class="btn btn-primary w-100 py-2">เข้าสู่ระบบ</button>
+        </form>
+      </div>
+
+      <!-- ส่วนจัดการระบบ Admin -->
+      <div id="adminContent" class="d-none">
+        <div class="card main-card p-3 mb-3 bg-white d-flex flex-row justify-content-between align-items-center">
+          <div>
+            <span class="fw-bold text-primary fs-5" id="adminWelcomeText">ยินดีต้อนรับเจ้าหน้าที่</span>
+            <span class="badge bg-slate-custom ms-2" id="adminRoleBadge">Admin</span>
+          </div>
+          <button class="btn btn-outline-danger btn-sm" id="btnLogout"><i class="fa-solid fa-right-from-bracket me-1"></i>ออกจากระบบ</button>
+        </div>
+
+        <!-- Admin Sub Navigation -->
+        <ul class="nav nav-tabs mb-3" id="adminSubTab" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link active fw-bold" id="dash-subtab" data-bs-toggle="tab" data-bs-target="#dash-pane"><i class="fa-solid fa-chart-pie me-2"></i>Dashboard</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link fw-bold" id="requests-subtab" data-bs-toggle="tab" data-bs-target="#requests-pane"><i class="fa-solid fa-list-check me-2"></i>รายการคำขอ</button>
+          </li>
+          <!-- ซ่อนและแสดงเฉพาะ Role Admin -->
+          <li class="nav-item d-none" id="users-tab-item">
+            <button class="nav-link fw-bold" id="users-subtab" data-bs-toggle="tab" data-bs-target="#users-pane"><i class="fa-solid fa-users-gear me-2"></i>จัดการผู้ใช้งาน</button>
+          </li>
+          <li class="nav-item d-none" id="logs-tab-item">
+            <button class="nav-link fw-bold" id="logs-subtab" data-bs-toggle="tab" data-bs-target="#logs-pane"><i class="fa-solid fa-clock-rotate-left me-2"></i>System Logs</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="adminSubTabContent">
+          <!-- 1. Dashboard Pane -->
+          <div class="tab-pane fade show active" id="dash-pane">
+            <div class="row g-3 mb-4">
+              <div class="col-md-20 col-md-4">
+                <div class="card stat-card bg-blue-custom p-3 shadow-sm">
+                  <div class="fs-6 opacity-75">คำขอทั้งหมด</div>
+                  <div class="fs-2 fw-bold" id="statTotal">0</div>
+                </div>
+              </div>
+              <div class="col-md-20 col-md-4">
+                <div class="card stat-card bg-amber-custom p-3 shadow-sm">
+                  <div class="fs-6 opacity-75">รอดำเนินการ</div>
+                  <div class="fs-2 fw-bold" id="statPending">0</div>
+                </div>
+              </div>
+              <div class="col-md-20 col-md-4">
+                <div class="card stat-card bg-slate-custom p-3 shadow-sm">
+                  <div class="fs-6 opacity-75">กำลังจัดเตรียม</div>
+                  <div class="fs-2 fw-bold" id="statPreparing">0</div>
+                </div>
+              </div>
+              <div class="col-md-20 col-md-4">
+                <div class="card stat-card bg-emerald-custom p-3 shadow-sm">
+                  <div class="fs-6 opacity-75">พร้อมรับเอกสาร</div>
+                  <div class="fs-2 fw-bold" id="statReady">0</div>
+                </div>
+              </div>
+              <div class="col-md-20 col-md-4">
+                <div class="card stat-card bg-slate-custom p-3 shadow-sm">
+                  <div class="fs-6 opacity-75">รับเอกสารแล้ว</div>
+                  <div class="fs-2 fw-bold" id="statCompleted">0</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="card main-card p-3 h-100">
+                  <h6 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-building me-2"></i>แยกตามสังกัด</h6>
+                  <div id="deptSummaryList" class="list-group list-group-flush"></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card main-card p-3 h-100">
+                  <h6 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-bullseye me-2"></i>แยกตามวัตถุประสงค์</h6>
+                  <div id="purposeSummaryList" class="list-group list-group-flush"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Requests Pane -->
+          <div class="tab-pane fade" id="requests-pane">
+            <div class="card main-card p-4">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>รหัสคำขอ</th>
+                      <th>วันที่ยื่น</th>
+                      <th>ชื่อ-นามสกุล</th>
+                      <th>สังกัด</th>
+                      <th>เบอร์โทร</th>
+                      <th>สถานะ</th>
+                      <th>จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Users Management Pane -->
+          <div class="tab-pane fade" id="users-pane">
+            <div class="card main-card p-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-secondary mb-0"><i class="fa-solid fa-users me-2"></i>รายชื่อผู้ใช้งานในระบบ</h6>
+                <button class="btn btn-success btn-sm" id="btnAddUser"><i class="fa-solid fa-plus me-1"></i>เพิ่มผู้ใช้ใหม่</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>รหัสผู้ใช้</th>
+                      <th>Username</th>
+                      <th>ชื่อ-นามสกุล</th>
+                      <th>สิทธิ์การใช้งาน</th>
+                      <th>สถานะ</th>
+                      <th>วันที่สร้าง</th>
+                      <th>จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Logs Pane -->
+          <div class="tab-pane fade" id="logs-pane">
+            <div class="card main-card p-4">
+              <h6 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-list-ol me-2"></i>ประวัติการใช้งานระบบ (System Logs)</h6>
+              <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                  <thead class="table-light">
+                    <tr>
+                      <th>วัน-เวลา</th>
+                      <th>ผู้ใช้งาน</th>
+                      <th>การกระทำ (Action)</th>
+                      <th>รายละเอียด</th>
+                    </tr>
+                  </thead>
+                  <tbody id="logsTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal แก้ไขสถานะคำขอ -->
+<div class="modal fade" id="updateModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>อัปเดตสถานะคำขอ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editRowIndex">
+        <div class="mb-3">
+          <label class="form-label">รหัสคำขอ</label>
+          <input type="text" id="editRequestId" class="form-control bg-light" readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">สถานะคำขอ</label>
+          <select id="editStatus" class="form-select">
+            <option value="รอดำเนินการ">รอดำเนินการ</option>
+            <option value="กำลังจัดเตรียม">กำลังจัดเตรียม</option>
+            <option value="พร้อมรับเอกสาร">พร้อมรับเอกสาร</option>
+            <option value="รับเอกสารแล้ว">รับเอกสารแล้ว</option>
+            <option value="ยกเลิก">ยกเลิก</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">หมายเหตุถึงผู้ขอ / กำหนดวันรับเอกสาร</label>
+          <textarea id="editAdminNote" class="form-control" rows="3" placeholder="ระบุวันที่ให้มารับ หรือเหตุผลอื่นๆ"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="btnSaveStatus">บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal เพิ่ม/แก้ไขผู้ใช้ -->
+<div class="modal fade" id="userModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="userModalTitle">เพิ่มผู้ใช้ใหม่</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="userRowIndex">
+        <div class="mb-3">
+          <label class="form-label">ชื่อผู้ใช้งาน (Username) <span class="text-danger">*</span></label>
+          <input type="text" id="modalUsername" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">รหัสผ่าน (Password) <span id="pwdNotice" class="text-muted">(กรอกเมื่อต้องการเปลี่ยน)</span></label>
+          <input type="password" id="modalPassword" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">ชื่อ-นามสกุล <span class="text-danger">*</span></label>
+          <input type="text" id="modalFullName" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">สิทธิ์การใช้งาน</label>
+          <select id="modalRole" class="form-select">
+            <option value="Staff">Staff</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">สถานะ</label>
+          <select id="modalStatus" class="form-select">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="btnSaveUser">บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  let loggedUser = null;
+
+  $(document).ready(function() {
+
+    $('#idCard').on('input', function() {
+      this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    $('input[name="purposeRadio"]').on('change', function() {
+      if ($(this).val() === 'อื่นๆ') {
+        $('#otherPurposeBox').removeClass('d-none');
+        $('#otherPurposeInput').attr('required', true);
+      } else {
+        $('#otherPurposeBox').addClass('d-none');
+        $('#otherPurposeInput').removeAttr('required').val('');
+      }
+    });
+
+    // 1. Submit Request Form
+    $('#requestForm').on('submit', function(e) {
+      e.preventDefault();
+      const idCardVal = $('#idCard').val().trim();
+      
+      if (idCardVal.length !== 13) {
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกเลขประจำตัวประชาชนให้ครบถ้วน 13 หลัก', 'warning');
+        return;
+      }
+
+      let selectedPurpose = $('input[name="purposeRadio"]:checked').val();
+      if (selectedPurpose === 'อื่นๆ') {
+        const otherDetail = $('#otherPurposeInput').val().trim();
+        if (!otherDetail) {
+          Swal.fire('แจ้งเตือน', 'กรุณาระบุวัตถุประสงค์เพิ่มเติม', 'warning');
+          return;
+        }
+        selectedPurpose = 'อื่นๆ (' + otherDetail + ')';
+      }
+
+      const formData = {
+        idCard: idCardVal,
+        fullName: $('#fullName').val().trim(),
+        position: $('#position').val(),
+        department: $('#department').val(),
+        phone: $('#phone').val().trim(),
+        quantity: $('#quantity').val(),
+        purpose: selectedPurpose
+      };
+
+      Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if(res.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'ยื่นคำขอสำเร็จ!',
+              html: `รหัสคำขอของคุณคือ: <b class="text-primary fs-4">${res.requestId}</b><br><small class="text-muted">โปรดบันทึกรหัสนี้ไว้เพื่อติดตามสถานะ</small>`,
+              confirmButtonText: 'ตกลง'
+            });
+            $('#requestForm')[0].reset();
+            $('#otherPurposeBox').addClass('d-none');
+          } else {
+            Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
+          }
+        })
+        .submitRequest(formData);
+    });
+
+    // 2. Track Status Search
+    $('#btnSearch').on('click', function() {
+      const keyword = $('#searchKeyword').val().trim();
+      if(!keyword) {
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกเลขประจำตัวประชาชน หรือ รหัสคำขอ', 'warning');
+        return;
+      }
+
+      Swal.fire({ title: 'กำลังค้นหา...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          Swal.close();
+          const container = $('#statusResult');
+          container.empty();
+
+          if(!res.success || res.results.length === 0) {
+            container.html('<div class="alert alert-warning text-center">ไม่พบข้อมูลคำขอในระบบ</div>');
+            return;
+          }
+
+          res.results.forEach(item => {
+            let statusBadge = getStatusBadge(item.status);
+            let pickupAlert = '';
+
+            if(item.status === 'พร้อมรับเอกสาร') {
+              pickupAlert = `
+                <div class="notice-box p-3 mt-3">
+                  <h6 class="fw-bold text-primary mb-1"><i class="fa-solid fa-location-dot me-2"></i>คำขอพร้อมรับเอกสารแล้ว!</h6>
+                  <p class="mb-1 text-dark">กรุณา <b>มารับเอกสารด้วยตนเอง หรือมอบอำนาจให้ผู้อื่นรับแทน</b> ได้ที่ <b>กองการเจ้าหน้าที่</b> ในวันและเวลาราชการ</p>
+                  <small class="text-success fw-bold"><i class="fa-regular fa-clock me-1"></i>พร้อมรับเมื่อ: ${formatDate(item.readyTimestamp)}</small>
+                </div>
+              `;
+            }
+
+            const cardHtml = `
+              <div class="card border mb-3 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <span class="fw-bold text-primary">รหัสคำขอ: ${item.requestId}</span>
+                  <span>${statusBadge}</span>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6"><b>ชื่อ-นามสกุล:</b> ${item.fullName}</div>
+                    <div class="col-md-6"><b>ตำแหน่ง:</b> ${item.position}</div>
+                    <div class="col-md-6 mt-2"><b>สังกัด:</b> ${item.department}</div>
+                    <div class="col-md-6 mt-2"><b>วันที่ยื่นคำขอ:</b> ${formatDate(item.timestamp)}</div>
+                    <div class="col-md-6 mt-2"><b>วัตถุประสงค์:</b> ${item.purpose}</div>
+                    <div class="col-md-6 mt-2"><b>จำนวนที่ขอ:</b> ${item.quantity} ชุด</div>
+                    <div class="col-12 mt-2"><b>หมายเหตุจากเจ้าหน้าที่:</b> <span class="text-secondary">${item.adminNote || '-'}</span></div>
+                  </div>
+                  ${pickupAlert}
+                </div>
+              </div>
+            `;
+            container.append(cardHtml);
+          });
+        })
+        .checkStatus(keyword);
+    });
+
+    // 3. Admin Login
+    $('#adminLoginForm').on('submit', function(e) {
+      e.preventDefault();
+      const u = $('#adminUsername').val().trim();
+      const p = $('#adminPassword').val().trim();
+
+      Swal.fire({ title: 'กำลังตรวจสอบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          Swal.close();
+          if(res.success) {
+            loggedUser = res.user;
+            $('#adminWelcomeText').text('ผู้ใช้งาน: ' + res.user.fullName);
+            $('#adminRoleBadge').text(res.user.role);
+            $('#adminLoginBox').addClass('d-none');
+            $('#adminContent').removeClass('d-none');
+
+            // ควบคุมการเข้าถึงเมนูตาม Role (เฉพาะ Admin ที่เห็น จัดการผู้ใช้งาน และ System Logs)
+            if (res.user.role === 'Admin') {
+              $('#users-tab-item').removeClass('d-none');
+              $('#logs-tab-item').removeClass('d-none');
+            } else {
+              $('#users-tab-item').addClass('d-none');
+              $('#logs-tab-item').addClass('d-none');
+              // หากไม่ได้เป็น Admin ให้เปลี่ยนไปที่แท็บ Dashboard เสมอ
+              const dashTrigger = document.querySelector('#dash-subtab');
+              if (dashTrigger) {
+                const tab = new bootstrap.Tab(dashTrigger);
+                tab.show();
+              }
+            }
+
+            loadDashboardStats();
+            loadAdminRequests();
+
+            if (res.user.role === 'Admin') {
+              loadUsersList();
+              loadLogsList();
+            }
+          } else {
+            Swal.fire('เข้าสู่ระบบไม่สำเร็จ', res.message, 'error');
+          }
+        })
+        .loginAdmin(u, p);
+    });
+
+    $('#btnLogout').on('click', function() {
+      loggedUser = null;
+      $('#adminContent').addClass('d-none');
+      $('#adminLoginBox').removeClass('d-none');
+      $('#adminUsername').val('');
+      $('#adminPassword').val('');
+    });
+
+    // Load Dashboard Stats
+    function loadDashboardStats() {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.success && res.stats) {
+          const s = res.stats;
+          $('#statTotal').text(s.total || 0);
+          $('#statPending').text(s.pending || 0);
+          $('#statPreparing').text(s.preparing || 0);
+          $('#statReady').text(s.ready || 0);
+          $('#statCompleted').text(s.completed || 0);
+
+          let deptHtml = '';
+          for (let d in s.deptStats) {
+            deptHtml += `<div class="list-group-item d-flex justify-content-between align-items-center">${d}<span class="badge bg-blue-custom rounded-pill">${s.deptStats[d]}</span></div>`;
+          }
+          $('#deptSummaryList').html(deptHtml || '<div class="text-muted p-2">ไม่มีข้อมูล</div>');
+
+          let purpHtml = '';
+          for (let p in s.purposeStats) {
+            purpHtml += `<div class="list-group-item d-flex justify-content-between align-items-center">${p}<span class="badge bg-slate-custom rounded-pill">${s.purposeStats[p]}</span></div>`;
+          }
+          $('#purposeSummaryList').html(purpHtml || '<div class="text-muted p-2">ไม่มีข้อมูล</div>');
+        }
+      }).getDashboardStats();
+    }
+
+    // Load Admin Requests
+    function loadAdminRequests() {
+      google.script.run.withSuccessHandler(function(res) {
+        const tbody = $('#adminTableBody');
+        tbody.empty();
+        if(res.success && res.data && res.data.length > 0) {
+          res.data.forEach(row => {
+            const tr = `
+              <tr>
+                <td class="fw-bold text-primary">${row.requestId}</td>
+                <td>${formatDate(row.timestamp)}</td>
+                <td>${row.fullName}</td>
+                <td>${row.department}</td>
+                <td>${row.phone}</td>
+                <td>${getStatusBadge(row.status)}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary btn-edit" 
+                    data-row="${row.rowIndex}" 
+                    data-req="${row.requestId}" 
+                    data-status="${row.status}" 
+                    data-note="${row.adminNote}">
+                    <i class="fa-solid fa-pen"></i> แก้ไข
+                  </button>
+                </td>
+              </tr>
+            `;
+            tbody.append(tr);
+          });
+        } else {
+          tbody.html('<tr><td colspan="7" class="text-center text-muted">ยังไม่มีรายการคำขอในระบบ</td></tr>');
+        }
+      }).getAllRequests();
+    }
+
+    // Load Users List
+    function loadUsersList() {
+      google.script.run.withSuccessHandler(function(res) {
+        const tbody = $('#usersTableBody');
+        tbody.empty();
+        if(res.success && res.users) {
+          res.users.forEach(u => {
+            const tr = `
+              <tr>
+                <td>${u.userId}</td>
+                <td class="fw-bold">${u.username}</td>
+                <td>${u.fullName}</td>
+                <td><span class="badge ${u.role === 'Admin' ? 'bg-rose-custom' : 'bg-blue-custom'}">${u.role}</span></td>
+                <td><span class="badge ${u.status === 'Active' ? 'bg-emerald-custom' : 'bg-slate-custom'}">${u.status}</span></td>
+                <td>${formatDate(u.createdAt)}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-warning btn-edit-user" 
+                    data-row="${u.rowIndex}" data-user="${u.username}" data-name="${u.fullName}" data-role="${u.role}" data-status="${u.status}">
+                    <i class="fa-solid fa-user-pen"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger btn-del-user" data-row="${u.rowIndex}" data-user="${u.username}">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+            tbody.append(tr);
+          });
+        }
+      }).getUsers();
+    }
+
+    // Load System Logs List
+    function loadLogsList() {
+      google.script.run.withSuccessHandler(function(res) {
+        const tbody = $('#logsTableBody');
+        tbody.empty();
+        if(res.success && res.logs) {
+          res.logs.forEach(l => {
+            const tr = `
+              <tr>
+                <td><small class="text-muted">${formatDate(l.timestamp)}</small></td>
+                <td><b>${l.user}</b></td>
+                <td><span class="badge bg-slate-100 text-dark border">${l.action}</span></td>
+                <td><small>${l.details}</small></td>
+              </tr>
+            `;
+            tbody.append(tr);
+          });
+        }
+      }).getSystemLogs();
+    }
+
+    // Modal Edit Request Status
+    $(document).on('click', '.btn-edit', function() {
+      $('#editRowIndex').val($(this).data('row'));
+      $('#editRequestId').val($(this).data('req'));
+      $('#editStatus').val($(this).data('status'));
+      $('#editAdminNote').val($(this).data('note'));
+      new bootstrap.Modal(document.getElementById('updateModal')).show();
+    });
+
+    $('#btnSaveStatus').on('click', function() {
+      const payload = {
+        rowIndex: $('#editRowIndex').val(),
+        requestId: $('#editRequestId').val(),
+        status: $('#editStatus').val(),
+        adminNote: $('#editAdminNote').val().trim()
+      };
+
+      Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          Swal.close();
+          if(res.success) {
+            bootstrap.Modal.getInstance(document.getElementById('updateModal')).hide();
+            Swal.fire('สำเร็จ', 'อัปเดตสถานะเรียบร้อยแล้ว', 'success');
+            loadAdminRequests();
+            loadDashboardStats();
+            if (loggedUser && loggedUser.role === 'Admin') {
+              loadLogsList();
+            }
+          } else {
+            Swal.fire('ข้อผิดพลาด', res.message, 'error');
+          }
+        })
+        .updateStatus(payload, loggedUser ? loggedUser.username : 'ADMIN');
+    });
+
+    // User Management Modal Handlers
+    $('#btnAddUser').on('click', function() {
+      $('#userRowIndex').val('');
+      $('#modalUsername').val('');
+      $('#modalPassword').val('');
+      $('#modalFullName').val('');
+      $('#modalRole').val('Staff');
+      $('#modalStatus').val('Active');
+      $('#userModalTitle').text('เพิ่มผู้ใช้ใหม่');
+      new bootstrap.Modal(document.getElementById('userModal')).show();
+    });
+
+    $(document).on('click', '.btn-edit-user', function() {
+      $('#userRowIndex').val($(this).data('row'));
+      $('#modalUsername').val($(this).data('user'));
+      $('#modalPassword').val('');
+      $('#modalFullName').val($(this).data('name'));
+      $('#modalRole').val($(this).data('role'));
+      $('#modalStatus').val($(this).data('status'));
+      $('#userModalTitle').text('แก้ไขผู้ใช้');
+      new bootstrap.Modal(document.getElementById('userModal')).show();
+    });
+
+    $('#btnSaveUser').on('click', function() {
+      const userData = {
+        rowIndex: $('#userRowIndex').val(),
+        username: $('#modalUsername').val().trim(),
+        password: $('#modalPassword').val().trim(),
+        fullName: $('#modalFullName').val().trim(),
+        role: $('#modalRole').val(),
+        status: $('#modalStatus').val()
+      };
+
+      if (!userData.username || !userData.fullName) {
+        Swal.fire('เตือน', 'กรุณากรอก Username และ ชื่อ-นามสกุล', 'warning');
+        return;
+      }
+
+      Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      google.script.run.withSuccessHandler(function(res) {
+        Swal.close();
+        if (res.success) {
+          bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+          Swal.fire('สำเร็จ', 'บันทึกข้อมูลผู้ใช้งานเรียบร้อยแล้ว', 'success');
+          loadUsersList();
+          loadLogsList();
+        } else {
+          Swal.fire('ข้อผิดพลาด', res.message, 'error');
+        }
+      }).saveUser(userData, loggedUser ? loggedUser.username : 'ADMIN');
+    });
+
+    $(document).on('click', '.btn-del-user', function() {
+      const row = $(this).data('row');
+      const uname = $(this).data('user');
+
+      Swal.fire({
+        title: 'ยืนยันการลบ?',
+        text: `คุณต้องการลบผู้ใช้ "${uname}" หรือไม่?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ลบข้อมูล',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          google.script.run.withSuccessHandler(function(res) {
+            if(res.success) {
+              Swal.fire('ลบสำเร็จ', 'ลบผู้ใช้เรียบร้อยแล้ว', 'success');
+              loadUsersList();
+              loadLogsList();
+            }
+          }).deleteUser(row, uname, loggedUser ? loggedUser.username : 'ADMIN');
+        }
+      });
+    });
+
+    // Helper Functions
+    function getStatusBadge(status) {
+      switch(status) {
+        case 'รอดำเนินการ': return '<span class="badge bg-amber-custom badge-status">รอดำเนินการ</span>';
+        case 'กำลังจัดเตรียม': return '<span class="badge bg-amber-custom badge-status">กำลังจัดเตรียม</span>';
+        case 'พร้อมรับเอกสาร': return '<span class="badge bg-emerald-custom badge-status">พร้อมรับเอกสาร</span>';
+        case 'รับเอกสารแล้ว': return '<span class="badge bg-slate-custom badge-status">รับเอกสารแล้ว</span>';
+        case 'ยกเลิก': return '<span class="badge bg-rose-custom badge-status">ยกเลิก</span>';
+        default: return `<span class="badge bg-slate-custom badge-status">${status}</span>`;
+      }
+    }
+
+    function formatDate(dt) {
+      if(!dt) return '-';
+      const d = new Date(dt);
+      if (isNaN(d.getTime())) return dt;
+      return d.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+    }
+
+  });
+</script>
+</body>
+</html>
