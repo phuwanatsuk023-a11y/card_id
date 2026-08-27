@@ -540,11 +540,7 @@
                     <h2 class="text-xl font-bold text-blue-900 mb-4">ตั้งค่าฐานข้อมูล Google Apps Script (GAS)</h2>
                     <p class="text-sm text-gray-600 mb-6">หากปล่อยว่างไว้ ระบบจะทำงานในโหมด "Local Storage" หากต้องการให้เชื่อมกับ Google Sheets ให้วาง Web App URL ลงที่นี่</p>
                     
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold mb-1">Web App URL (GAS End Point)</label>
-                        <input type="text" id="set_gas_url" placeholder="https://script.google.com/macros/s/AKfycbxumO_fFwaz3vNEt_VVxX9nEgy_OTx_7eQho3BQyuUrvzi94FFpEaE2IndeoEydfjUUXQ/exec" class="w-full border rounded px-3 py-2 font-mono text-sm">
-                    </div>
-                    <button onclick="saveSystemSettings()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"><i class="fa-solid fa-save"></i> บันทึกการเชื่อมต่อ</button>
+                    
                 </div>
             </section>
 
@@ -677,7 +673,7 @@
     </div>
 
     <script>
-        let GAS_URL = 'https://script.google.com/macros/s/AKfycbxumO_fFwaz3vNEt_VVxX9nEgy_OTx_7eQho3BQyuUrvzi94FFpEaE2IndeoEydfjUUXQ/exec';
+        let GAS_URL = 'https://script.google.com/macros/s/AKfycbzY7B7uziATBoaVzHmrcJtLHHVpBRlpWLlr3a4Ew7UFBa9MOTDJhd7lkMvkbxxP-3C23g/exec';
         let USE_LOCAL = GAS_URL === '';
         
         let masterAffiliations = JSON.parse(localStorage.getItem('gov_master_affiliations')) || [];
