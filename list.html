@@ -1969,6 +1969,85 @@
 
             return formattedValue;
         }
+
+
+        /**
+ * ฟังก์ชันจัดการ Drag & Drop สำหรับองค์ประกอบบนบัตร
+ * @param {HTMLElement} element - Element ที่ต้องการให้ลากได้ (เช่น ข้อความ/รูป)
+ * @param {HTMLElement} container - กรอบบัตร (Editor Canvas)
+ * @param {Function} onPositionChange - Callback Function เมื่อตำแหน่งเปลี่ยน (x, y)
+ */
+function attachDragAndDropToEditor(element, container, onPositionChange) {
+  let isDragging = false;
+  let startMouseX = 0;
+  let startMouseY = 0;
+  let startElemLeft = 0;
+  let startElemTop = 0;
+
+  element.addEventListener('mousedown', (e) => {
+    // ป้องกัน Event ทะลุไปตัวอื่น
+    e.preventDefault();
+    e.stopPropagation();
+
+    isDragging = true;
+
+    // คำนวณ Scale กรอบบัตร (เผื่อมีการทำ Zoom In / Zoom Out)
+    const rect = container.getBoundingClientRect();
+    const scale = rect.width / container.offsetWidth || 1;
+
+    startMouseX = e.clientX;
+    startMouseY = e.clientY;
+
+    // ดึงค่า left, top ปัจจุบันของ Element (ถ้าไม่มีให้เป็น 0)
+    startElemLeft = parseFloat(element.style.left) || 0;
+    startElemTop = parseFloat(element.style.top) || 0;
+
+    // เพิ่ม UI visual feedback ขณะกำลังลาก
+    element.classList.add('cursor-grabbing', 'ring-2', 'ring-blue-500', 'z-50');
+
+    const onMouseMove = (moveEvent) => {
+      if (!isDragging) return;
+
+      // คำนวณระยะที่เม้าส์ขยับไป โดยหารด้วย scale เพื่อความแม่นยำ
+      const deltaX = (moveEvent.clientX - startMouseX) / scale;
+      const deltaY = (moveEvent.clientY - startMouseY) / scale;
+
+      let newLeft = Math.round(startElemLeft + deltaX);
+      let newTop = Math.round(startElemTop + deltaY);
+
+      // Boundary Check: ป้องกันไม่ให้ลากออกนอกขอบบัตร
+      const maxLeft = container.offsetWidth - element.offsetWidth;
+      const maxTop = container.offsetHeight - element.offsetHeight;
+
+      newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+      newTop = Math.max(0, Math.min(newTop, maxTop));
+
+      // อัปเดตตำแหน่ง DOM
+      element.style.left = `${newLeft}px`;
+      element.style.top = `${newTop}px`;
+
+      // ส่งค่าตำแหน่ง X, Y กลับไปอัปเดต State หรือข้อมูล Template
+      if (typeof onPositionChange === 'function') {
+        onPositionChange(newLeft, newTop);
+      }
+    };
+
+    const onMouseUp = () => {
+      if (!isDragging) return;
+      isDragging = false;
+
+      // คืนค่า Styling เดิม
+      element.classList.remove('cursor-grabbing', 'ring-2', 'ring-blue-500', 'z-50');
+
+      // ลบ Event Listener เมื่อปล่อยเม้าส์
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+}
     </script>
 </body>
 </html>
