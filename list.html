@@ -2048,6 +2048,60 @@ function attachDragAndDropToEditor(element, container, onPositionChange) {
     document.addEventListener('mouseup', onMouseUp);
   });
 }
+
+
+        async function printCardProcess(targetEmployee) {
+  const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+  if (!currentUser) {
+    alert("กรุณาเข้าสู่ระบบก่อนทำรายการ");
+    return;
+  }
+
+  // แสดง Loading...
+  Swal.fire({ title: 'กำลังตรวจสอบโควตา...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+  try {
+    // ส่งข้อมูลไปบันทึกและตรวจสอบโควตาที่ GAS
+    const response = await fetch(GAS_WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'record_print',
+        data: {
+          user_id: currentUser.user_id,
+          target_person_id: targetEmployee.id, // รหัสประจำตัว/บัตรประชาชน ของคนที่ถูกพิมพ์
+          target_person_name: `${targetEmployee.firstname} ${targetEmployee.lastname}`
+        }
+      })
+    });
+
+    const resData = await response.json();
+    Swal.close();
+
+    if (resData.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'อนุมัติการพิมพ์',
+        text: `${resData.message} (โควตาคงเหลือเดือนนี้: ${resData.remaining} คน)`,
+        timer: 2000,
+        showConfirmButton: false
+      }).then(() => {
+        // สั่งพิมพ์หน้าบัตร
+        window.print();
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'ไม่สามารถพิมพ์บัตรได้',
+        text: resData.message
+      });
+    }
+
+  } catch (error) {
+    Swal.close();
+    alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์: " + error.message);
+  }
+}
     </script>
 </body>
 </html>
